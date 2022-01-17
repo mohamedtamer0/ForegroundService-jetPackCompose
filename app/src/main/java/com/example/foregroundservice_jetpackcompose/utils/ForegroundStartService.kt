@@ -9,7 +9,7 @@ import com.example.foregroundservice_jetpackcompose.service.MyService
 
 fun Context.foregroundStartService(command: String) {
     val intent = Intent(this, MyService::class.java)
-    if (command == " Start") {
+    if (command == "Start") {
         intent.putExtra(INTENT_COMMAND, command)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

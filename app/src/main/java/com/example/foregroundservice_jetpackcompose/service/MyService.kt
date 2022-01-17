@@ -10,7 +10,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.foregroundservice_jetpackcompose.R
-import java.lang.Exception
 
 
 const val INTENT_COMMAND = "Command"
@@ -24,6 +23,7 @@ private const val CODE_REPLY_INTENT = 2
 private const val CODE_ACHIEVE_INTENT = 3
 
 class MyService : Service() {
+
     override fun onBind(p0: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -32,23 +32,22 @@ class MyService : Service() {
             stopService()
             return START_NOT_STICKY
         }
+
         showNotification()
 
         if (command == INTENT_COMMAND_REPLY) {
-            Toast.makeText(this, "Clicked in Notification", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Clicked in Notification", Toast.LENGTH_SHORT).show()
         }
 
         return START_STICKY
-
     }
-
 
     private fun stopService() {
         stopForeground(true)
         stopSelf()
     }
 
-    @SuppressLint
+    @SuppressLint("LaunchActivityFromNotification")
     private fun showNotification() {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val replyIntent = Intent(this, MyService::class.java).apply {
@@ -64,7 +63,6 @@ class MyService : Service() {
             this, CODE_ACHIEVE_INTENT, achieveIntent, 0
         )
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
                 with(
@@ -79,6 +77,7 @@ class MyService : Service() {
                     enableVibration(false)
                     setSound(null, null)
                     lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                    manager.createNotificationChannel(this)
                 }
             } catch (e: Exception) {
                 Log.d("Error", "showNotification: ${e.localizedMessage}")
@@ -105,7 +104,5 @@ class MyService : Service() {
             )
             startForeground(CODE_FOREGROUND_SERVICE, build())
         }
-
     }
-
 }
